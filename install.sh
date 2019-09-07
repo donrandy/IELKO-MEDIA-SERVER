@@ -10,12 +10,13 @@ mkdir ~/working/ngx_devel_kit
 mkdir ~/working/set-misc-nginx-module
 mkdir ~/working/nginx
 git clone https://github.com/donrandy/IELKO-MEDIA-SERVER.git ~/working/IELKO
-git clone https://github.com/arut/nginx-rtmp-module.git ~/working/nginx-rtmp-module
+git clone https://github.com/sergey-dryabzhinsky/nginx-rtmp-module.git ~/working/nginx-rtmp-module
 git clone https://github.com/openresty/set-misc-nginx-module.git ~/working/set-misc-nginx-module
 git clone https://github.com/simpl/ngx_devel_kit.git ~/working/ngx_devel_kit
-wget http://nginx.org/download/nginx-1.13.6.tar.gz -P ~/working
-tar -xf ~/working/nginx-1.13.6.tar.gz -C ~/working/nginx --strip-components=1
-rm ~/working/nginx-1.13.6.tar.gz
+git clone https://github.com/nginx-modules/nginx-hmac-secure-link.git ~/working/nginx-hmac-secure-link
+wget http://nginx.org/download/nginx-1.14.1.tar.gz -P ~/working
+tar -xf ~/working/nginx-1.14.1.tar.gz -C ~/working/nginx --strip-components=1
+rm ~/working/nginx-1.14.1.tar.gz
 cd ~/working/nginx
 ./configure --with-http_ssl_module --add-module=../nginx-rtmp-module --with-http_secure_link_module --add-module=../ngx_devel_kit --add-module=../set-misc-nginx-module
 make -j 2
