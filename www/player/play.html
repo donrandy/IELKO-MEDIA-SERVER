@@ -1,0 +1,171 @@
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>IELKO MULTI PLAYER</title>
+  <meta name="author" content="Ioannis Kokkinis">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="HandheldFriendly" content="true">
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+
+  <link href="http://vjs.zencdn.net/6.6.3/video-js.css" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="http://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"></script>
+  <script src="http://vjs.zencdn.net/6.6.3/video.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.12.2/videojs-contrib-hls.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dashjs/2.6.5/dash.all.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-dash/2.9.2/videojs-dash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/2.4.1/Youtube.min.js"></script>
+  <script src='js/sldp-v2.8.3.min.js' type='text/javascript'></script>
+  <script src="js/videojs-dailymotion.js"></script>
+  <script src="js/videojs-dvrseekbar.min.js"></script>
+  <script src="js/videojs-background.min.js"></script>
+  <script src="js/videojs-vimeo.min.js"></script>
+  <style>
+    body {
+      background-color: #000000;
+    }
+  </style>
+
+</head>
+
+
+<body class="container-fluid">
+
+  <div class="row">
+    <div class="span6 " style="float: none; margin: 0 auto;">
+      <div class="ielko_vid_container" id="ielko_vid_container"></div>
+    </div>
+  </div>
+
+
+  <script>
+    $(document).ready(function() {
+      var play = getUrlVars()["play"];
+      if (play) {
+        if (play.includes('m3u8') && play.includes('dvr') == false) {
+          playmedia('m3u8', play)
+        } else if (play.includes('m3u8') && play.includes('dvr')) {
+          playmedia('dvr', play)
+        } else if (play.indexOf('mpd') > -1) {
+          playmedia('mpd', play)
+        } else if (play.indexOf('ws:') > -1) {
+          playmedia_sldp('ws', play)
+        } else if (play.indexOf('rtmp') > -1) {
+          playmedia('rtmp', play)
+        } else if (play.indexOf('mp4') > -1) {
+          playmedia('mp4', play)
+        } else if (play.indexOf('youtube') > -1) {
+          playmedia('youtube', play)
+        } else if (play.indexOf('livestream.com') > -1) {
+          append_livestream(play);
+        } else if (play.indexOf('dailymotion') > -1) {
+          playmedia('dailymotion', play)
+        } else if (play.indexOf('vimeo') > -1) {
+          playmedia('vimeo', play)
+        }
+      }
+      var poster = getUrlVars()["poster"];
+      var title = getUrlVars()["channel"];
+      var width = getUrlVars()["width"];
+      var height = getUrlVars()["height"];
+
+
+      function append_livestream(play) {
+        var livestreamID = play.substr(play.lastIndexOf('/') + 1);
+        $(".upgvid").empty().append(
+          '<div id="videoHolder" style="background-image:url();" class="flowplayer-video videoHolder-322 videoHolder fullscreen-bg playful no-background"><div class="embed-container"><iframe src="http://cdn.livestream.com/embed/' +
+          livestreamID + '?autoplay=true" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></div></div>')
+      }
+
+
+
+      function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+          if (vars[key]) {
+            if (vars[key] instanceof Array) {
+              vars[key].push(value);
+            } else {
+              vars[key] = [vars[key], value];
+            }
+          } else {
+            vars[key] = value;
+          }
+        });
+        return vars;
+      }
+
+      function playmedia_sldp(type, url) {
+        width = (typeof width === 'undefined') ? '720' : x;
+        height = (typeof height === 'undefined') ? '576' : x;
+        var sldpPlayer;
+
+        sldpPlayer = SLDP.init({
+          container: 'ielko_vid_container',
+          stream_url: "ws://37.48.118.105:8081/ionian/live",
+          height: height,
+          width: width,
+          autoplay: true
+        });
+
+      }
+
+      function playmedia(type, url) {
+        switch (type) {
+          case 'm3u8':
+            thetype = 'application/x-mpegurl';
+            techordernode = '';
+            break;
+          case 'dvr':
+            thetype = 'application/x-mpegurl';
+            techordernode = '';
+            break;
+          case 'mpd':
+            thetype = 'application/dash+xml';
+            techordernode = '';
+            extra = 'controls';
+            break;
+          case 'mp4':
+            thetype = 'video/mp4';
+            techordernode = '';
+            break;
+          case 'youtube':
+            thetype = 'video/youtube';
+            techordernode = '"techOrder": ["youtube"],';
+            break;
+          case 'dailymotion':
+            thetype = 'video/dailymotion';
+            techordernode = '"techOrder": ["dailymotion"],';
+            break;
+          case 'vimeo':
+            thetype = 'video/vimeo';
+            techordernode = '"techOrder": ["vimeo"],';
+            break;
+          case 'rtmp':
+            thetype = 'application/x-mpegurl';
+            techordernode = '';
+            break;
+        }
+
+        width = (typeof width === 'undefined') ? '720' : x;
+        height = (typeof height === 'undefined') ? '576' : x;
+        poster = (typeof poster === 'undefined') ? 'noimage.jpg' : x;
+        $(".ielko_vid_container").empty().append(
+          '<video id="ielko-video" class="video-js vjs-default-skin"  width="' + width + '" height="' + height + '" controls poster="' + poster + '" ><source src="' + url +
+          '" type="' + thetype + '" data-setup="{ "width": auto, "height": auto }"></video>');
+        videojs("ielko-video").ready(function() {
+          var myPlayer = this;
+          if (type == 'dvr') {
+            myPlayer.dvrseekbar();
+          } else {}
+          myPlayer.play();
+        });
+
+
+      }
+
+
+    });
+  </script>
+</body>
